@@ -28,8 +28,5 @@ public class Row {
     
     public void incrementSeatsAvailable(){
         seatsAvailable++;
-        if (seatsAvailable == 0) {
-            this.full = true;
-        }
     }
 }

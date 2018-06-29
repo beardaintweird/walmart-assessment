@@ -80,4 +80,12 @@ public class TicketServiceTest {
 		assertEquals(ticketService.venue.holdRequests.get(holdId), null);
 	}
 	
+	@Test
+	public void TestRemoveSeats(){
+		SeatHold hold = ticketService.findAndHoldSeats(5, email);
+		Seat firstSeat = hold.seats.get(0);
+		ticketService.removeSeats(hold.seats);
+		assertEquals(true, firstSeat.available);
+	}
+	
 }

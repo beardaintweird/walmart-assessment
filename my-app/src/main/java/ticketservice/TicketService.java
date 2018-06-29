@@ -26,12 +26,10 @@ public class TicketService implements TicketServiceInterface {
         
     }
 
-    @Override
     public int numSeatsAvailable() {
         return venue.getCapacity() - venue.getSeatsReserved();
     }
 
-    @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
         if (numSeats > venue.getCapacity()){
             throw new IllegalArgumentException("Number of seats requested is larger than the capacity of the venue.");
@@ -49,7 +47,6 @@ public class TicketService implements TicketServiceInterface {
         return hold;
     }
 
-    @Override
     public String reserveSeats(String seatHoldId, String customerEmail) {
         SeatHold hold = venue.holdRequests.get(seatHoldId);
         Timestamp now = new Timestamp(System.currentTimeMillis());
@@ -64,10 +61,10 @@ public class TicketService implements TicketServiceInterface {
     }
     
     // helper method to remove seats
-    private void removeSeats(ArrayList<Seat> seats){
+    public void removeSeats(ArrayList<Seat> seats){
     	for (Seat s:seats){
     		Row row = venue.arrangement.get(s.row);
-    		row.decrementSeatsAvailable();
+    		row.incrementSeatsAvailable();
             s.available = true;
         }
     }
