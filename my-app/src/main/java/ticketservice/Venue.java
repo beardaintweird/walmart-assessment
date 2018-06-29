@@ -15,8 +15,8 @@ import java.util.HashMap;
 public class Venue {
     private int capacity;
     private int seatsReserved;
-    ArrayList<Row> arrangement;
-    HashMap<String, SeatHold> holdRequests;
+    public ArrayList<Row> arrangement;
+    public HashMap<String, SeatHold> holdRequests;
     
     Venue(int numSeats, int numRows) {
         this.capacity = numSeats * numRows;
