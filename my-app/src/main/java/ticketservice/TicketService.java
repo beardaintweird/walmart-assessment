@@ -23,23 +23,17 @@ public class TicketService implements TicketServiceInterface {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        TicketService ticketService = new TicketService();
-        System.out.println(ticketService.numSeatsAvailable());
-        SeatHold hold = ticketService.findAndHoldSeats(5, "test@test.com");
-        System.out.println(ticketService.numSeatsAvailable());
-        System.out.println(venue.seatsReserved);
-        String reservationId = ticketService.reserveSeats(hold.id, "test@test.com");
-        System.out.println(reservationId);
+        
     }
 
     @Override
     public int numSeatsAvailable() {
-        return venue.capacity - venue.seatsReserved;
+        return venue.getCapacity() - venue.getSeatsReserved();
     }
 
     @Override
     public SeatHold findAndHoldSeats(int numSeats, String customerEmail) {
-        if (numSeats > venue.capacity){
+        if (numSeats > venue.getCapacity()){
             throw new IllegalArgumentException("Number of seats requested is larger than the capacity of the venue.");
         }
         if (numSeats > numSeatsAvailable()){
@@ -48,9 +42,9 @@ public class TicketService implements TicketServiceInterface {
         
         //Finding and adding the seats to the hold
         SeatHold hold = new SeatHold(numSeats, customerEmail);
-        hold.seats = addSeats(venue, numSeats);
+        hold.seats = addSeats(numSeats);
         
-        venue.seatsReserved += numSeats;
+        venue.incrementSeatsReserved(numSeats);
         venue.addHold(hold);
         return hold;
     }
@@ -59,20 +53,26 @@ public class TicketService implements TicketServiceInterface {
     public String reserveSeats(String seatHoldId, String customerEmail) {
         SeatHold hold = venue.holdRequests.get(seatHoldId);
         Timestamp now = new Timestamp(System.currentTimeMillis());
-        if (now.after(hold.expiration)){
-            throw new IllegalArgumentException("The hold id is expired.");
+        if (now.after(hold.getExpiration())){
+            removeSeats(hold.seats);
+            throw new IllegalArgumentException("This hold has expired.");
         }
-        venue.holdRequests.remove(seatHoldId);
-        for (Seat s:hold.seats){
-            s.available = false;
-        }
+        venue.removeHoldRequest(hold.getId());
         
         UUID uuid = UUID.randomUUID();
         return uuid.toString();
     }
     
-    // helper method to simplify code
-    private ArrayList<Seat> addSeats(Venue venue, int numSeats){
+    // helper method to remove seats
+    private void removeSeats(ArrayList<Seat> seats){
+    	for (Seat s:seats){
+    		Row row = venue.arrangement.get(s.row);
+    		row.decrementSeatsAvailable();
+            s.available = true;
+        }
+    }
+    // helper method to add seats to SeatHold
+    private ArrayList<Seat> addSeats(int numSeats){
         ArrayList list = new ArrayList<Seat>(numSeats);
         int seatsLeft = numSeats;
         for (Row r:venue.arrangement) {
@@ -81,8 +81,10 @@ public class TicketService implements TicketServiceInterface {
             }
             int index = r.seats.length - r.seatsAvailable;
             while (index < r.seats.length && seatsLeft > 0) {
-                list.add(r.seats[index]);
-                r.decrement();
+            	Seat seat = r.seats[index];
+                list.add(seat);
+                seat.available = false;
+                r.decrementSeatsAvailable();
                 index++;
                 seatsLeft--;
             }

@@ -19,8 +19,15 @@ public class Row {
         this.seats = new Seat[numSeats];
     }
     
-    public void decrement(){
+    public void decrementSeatsAvailable(){
         seatsAvailable--;
+        if (seatsAvailable == 0) {
+            this.full = true;
+        }
+    }
+    
+    public void incrementSeatsAvailable(){
+        seatsAvailable++;
         if (seatsAvailable == 0) {
             this.full = true;
         }

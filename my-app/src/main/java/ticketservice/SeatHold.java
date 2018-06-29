@@ -15,9 +15,9 @@ import java.util.UUID;
  */
 class SeatHold {
     ArrayList<Seat> seats;
-    String email;
-    String id;
-    Timestamp expiration;
+    private String email;
+    private String id;
+    private Timestamp expiration;
     
     SeatHold(int numSeats, String email) {
         this.seats = new ArrayList<Seat>(numSeats);
@@ -28,5 +28,21 @@ class SeatHold {
         
         int fiveMinutes = 1000 * 500;
         this.expiration = new Timestamp(System.currentTimeMillis() + fiveMinutes);
+    }
+    
+    public String getEmail(){
+    	return this.email;
+    }
+    
+    public String getId(){
+    	return this.id;
+    }
+    
+    public Timestamp getExpiration(){
+    	return this.expiration;
+    }
+    
+    public void setExpiration(Timestamp timestamp){
+    	this.expiration = timestamp;
     }
 }

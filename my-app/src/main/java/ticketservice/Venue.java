@@ -13,8 +13,8 @@ import java.util.HashMap;
  * @author SAK
  */
 public class Venue {
-    int capacity;
-    int seatsReserved;
+    private int capacity;
+    private int seatsReserved;
     ArrayList<Row> arrangement;
     HashMap<String, SeatHold> holdRequests;
     
@@ -33,8 +33,24 @@ public class Venue {
         }
     }
     
+    public int getCapacity(){
+    	return this.capacity;
+    }
+    
+    public int getSeatsReserved(){
+    	return this.seatsReserved;
+    }
+    
+    public void incrementSeatsReserved(int num){
+    	this.seatsReserved += num; 
+    }
+    
+    public void removeHoldRequest(String id){
+    	this.holdRequests.remove(id);
+    }
+    
     public void addHold(SeatHold hold){
-        holdRequests.put(hold.id,hold);
+        holdRequests.put(hold.getId(),hold);
     }
     
     public void reserveSeats() {
