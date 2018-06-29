@@ -52,8 +52,4 @@ public class Venue {
     public void addHold(SeatHold hold){
         holdRequests.put(hold.getId(),hold);
     }
-    
-    public void reserveSeats() {
-        
-    }
 }
